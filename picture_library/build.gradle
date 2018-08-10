@@ -1,8 +1,9 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion cfgs.compileSdkVersion
-
+    buildToolsVersion cfgs.buildToolsVersion
     defaultConfig {
         minSdkVersion cfgs.minSdkVersion
         targetSdkVersion cfgs.targetSdkVersion
@@ -16,6 +17,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    lintOptions {
+        abortOnError false
+    }
 }
 
 dependencies {
@@ -28,4 +33,13 @@ dependencies {
     compile "com.github.bumptech.glide:glide:${cfgs.glide}"
     compile "io.reactivex.rxjava2:rxjava:${cfgs.rxjava}"
     compile "io.reactivex.rxjava2:rxandroid:${cfgs.rxandroid}"
+}
+
+publish {
+    userOrg = 'huach'//bintray.com用户名
+    groupId = 'com.ors'//jcenter上的路径
+    artifactId = 'PictureSelector'//项目名称
+    publishVersion = '1.0.0'//版本号
+    desc = 'android picture selector'//描述，不重要
+    website = 'https://github.com/469412882/PictureSelector'//网站，不重要；尽量模拟github上的地址，例如我这样的；当然你有地址最好了
 }
