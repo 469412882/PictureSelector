@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -46,6 +47,7 @@ public class FolderPopWindow extends PopupWindow implements View.OnClickListener
     private boolean isDismiss = false;
     private LinearLayout id_ll_root;
     private TextView picture_title;
+    private ImageView picture_title_arrow;
     private Drawable drawableUp, drawableDown;
     private int mimeType;
 
@@ -85,8 +87,9 @@ public class FolderPopWindow extends PopupWindow implements View.OnClickListener
         adapter.bindFolderData(folders);
     }
 
-    public void setPictureTitleView(TextView picture_title) {
+    public void setPictureTitleView(TextView picture_title, ImageView picture_title_arrow) {
         this.picture_title = picture_title;
+        this.picture_title_arrow = picture_title_arrow;
     }
 
     @Override
@@ -101,7 +104,7 @@ public class FolderPopWindow extends PopupWindow implements View.OnClickListener
             super.showAsDropDown(anchor);
             isDismiss = false;
             recyclerView.startAnimation(animationIn);
-            StringUtils.modifyTextViewDrawable(picture_title, drawableUp, 2);
+            picture_title_arrow.setImageDrawable(drawableUp);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -116,7 +119,7 @@ public class FolderPopWindow extends PopupWindow implements View.OnClickListener
         if (isDismiss) {
             return;
         }
-        StringUtils.modifyTextViewDrawable(picture_title, drawableDown, 2);
+        picture_title_arrow.setImageDrawable(drawableDown);
         isDismiss = true;
         recyclerView.startAnimation(animationOut);
         dismiss();

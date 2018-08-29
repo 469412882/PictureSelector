@@ -21,16 +21,15 @@ import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
-import com.luck.picture.lib.permissions.RxPermissions;
 import com.luck.picture.lib.tools.PictureFileUtils;
+import com.luck.picture.lib.tools.ToastManage;
 import com.luck.pictureselector.adapter.GridImageAdapter;
+import com.yanzhenjie.permission.Action;
+import com.yanzhenjie.permission.AndPermission;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener,
         RadioGroup.OnCheckedChangeListener, CompoundButton.OnCheckedChangeListener {
@@ -120,31 +119,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
 
         // 清空图片缓存，包括裁剪、压缩后的图片 注意:必须要在上传完成后调用 必须要获取权限
-        RxPermissions permissions = new RxPermissions(this);
-        permissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE).subscribe(new Observer<Boolean>() {
+        AndPermission.with(this).permission(Manifest.permission.WRITE_EXTERNAL_STORAGE).onGranted(new Action() {
             @Override
-            public void onSubscribe(Disposable d) {
+            public void onAction(List<String> permissions) {
+                PictureFileUtils.deleteCacheDirFile(MainActivity.this);
             }
-
+        }).onDenied(new Action() {
             @Override
-            public void onNext(Boolean aBoolean) {
-                if (aBoolean) {
-                    PictureFileUtils.deleteCacheDirFile(MainActivity.this);
-                } else {
-                    Toast.makeText(MainActivity.this,
-                            getString(R.string.picture_jurisdiction), Toast.LENGTH_SHORT).show();
-                }
+            public void onAction(List<String> permissions) {
+                Toast.makeText(MainActivity.this,
+                        getString(R.string.picture_jurisdiction), Toast.LENGTH_SHORT).show();
             }
-
-            @Override
-            public void onError(Throwable e) {
-            }
-
-            @Override
-            public void onComplete() {
-            }
-        });
-
+        }).start();
     }
 
     private GridImageAdapter.onAddPicClickListener onAddPicClickListener = new GridImageAdapter.onAddPicClickListener() {

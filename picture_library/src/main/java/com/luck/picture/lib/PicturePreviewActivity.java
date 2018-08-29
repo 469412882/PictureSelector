@@ -19,9 +19,6 @@ import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.EventEntity;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.observable.ImagesObservable;
-import com.luck.picture.lib.rxbus2.RxBus;
-import com.luck.picture.lib.rxbus2.Subscribe;
-import com.luck.picture.lib.rxbus2.ThreadMode;
 import com.luck.picture.lib.tools.ScreenUtils;
 import com.luck.picture.lib.tools.ToastManage;
 import com.luck.picture.lib.tools.VoiceUtils;
@@ -29,6 +26,10 @@ import com.luck.picture.lib.widget.PreviewViewPager;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropMulti;
 import com.yalantis.ucrop.model.CutInfo;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -84,8 +85,8 @@ public class PicturePreviewActivity extends PictureBaseActivity implements
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.picture_preview);
-        if (!RxBus.getDefault().isRegistered(this)) {
-            RxBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
         }
         mHandler = new Handler();
         screenWidth = ScreenUtils.getScreenWidth(this);
@@ -243,7 +244,7 @@ public class PicturePreviewActivity extends PictureBaseActivity implements
         if (selectImages != null
                 && selectImages.size() > 0) {
             LocalMedia media = selectImages.get(0);
-            RxBus.getDefault()
+            EventBus.getDefault()
                     .post(new EventEntity(PictureConfig.UPDATE_FLAG,
                             selectImages, media.getPosition()));
             selectImages.clear();
@@ -368,7 +369,7 @@ public class PicturePreviewActivity extends PictureBaseActivity implements
     private void updateSelector(boolean isRefresh) {
         if (isRefresh) {
             EventEntity obj = new EventEntity(PictureConfig.UPDATE_FLAG, selectImages, index);
-            RxBus.getDefault().post(obj);
+            EventBus.getDefault().post(obj);
         }
     }
 
@@ -426,7 +427,7 @@ public class PicturePreviewActivity extends PictureBaseActivity implements
 
     @Override
     public void onResult(List<LocalMedia> images) {
-        RxBus.getDefault().post(new EventEntity(PictureConfig.PREVIEW_DATA_FLAG, images));
+        EventBus.getDefault().post(new EventEntity(PictureConfig.PREVIEW_DATA_FLAG, images));
         // 如果开启了压缩，先不关闭此页面，PictureImageGridActivity压缩完在通知关闭
         if (!config.isCompress) {
             onBackPressed();
@@ -467,8 +468,8 @@ public class PicturePreviewActivity extends PictureBaseActivity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (RxBus.getDefault().isRegistered(this)) {
-            RxBus.getDefault().unregister(this);
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
         }
         if (mHandler != null) {
             mHandler.removeCallbacksAndMessages(null);

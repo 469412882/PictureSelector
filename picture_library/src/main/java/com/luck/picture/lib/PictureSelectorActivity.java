@@ -36,10 +36,6 @@ import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.entity.LocalMediaFolder;
 import com.luck.picture.lib.model.LocalMediaLoader;
 import com.luck.picture.lib.observable.ImagesObservable;
-import com.luck.picture.lib.permissions.RxPermissions;
-import com.luck.picture.lib.rxbus2.RxBus;
-import com.luck.picture.lib.rxbus2.Subscribe;
-import com.luck.picture.lib.rxbus2.ThreadMode;
 import com.luck.picture.lib.tools.DateUtils;
 import com.luck.picture.lib.tools.DoubleUtils;
 import com.luck.picture.lib.tools.PictureFileUtils;
@@ -51,14 +47,18 @@ import com.luck.picture.lib.widget.PhotoPopupWindow;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropMulti;
 import com.yalantis.ucrop.model.CutInfo;
+import com.yanzhenjie.permission.Action;
+import com.yanzhenjie.permission.AndPermission;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
 
 /**
  * @author：luck
@@ -71,7 +71,7 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
     private final static String TAG = PictureSelectorActivity.class.getSimpleName();
     private static final int SHOW_DIALOG = 0;
     private static final int DISMISS_DIALOG = 1;
-    private ImageView picture_left_back;
+    private ImageView picture_left_back, picture_title_arrow;
     private TextView picture_title, picture_right, picture_tv_ok, tv_empty,
             picture_tv_img_num, picture_id_preview, tv_PlayPause, tv_Stop, tv_Quit,
             tv_musicStatus, tv_musicTotal, tv_musicTime;
@@ -84,7 +84,6 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
     private FolderPopWindow folderWindow;
     private Animation animation = null;
     private boolean anim = false;
-    private RxPermissions rxPermissions;
     private PhotoPopupWindow popupWindow;
     private LocalMediaLoader mediaLoader;
     private MediaPlayer mediaPlayer;
@@ -144,36 +143,24 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!RxBus.getDefault().isRegistered(this)) {
-            RxBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
         }
-        rxPermissions = new RxPermissions(this);
         if (config.camera) {
             if (savedInstanceState == null) {
-                rxPermissions.request(Manifest.permission.READ_EXTERNAL_STORAGE)
-                        .subscribe(new Observer<Boolean>() {
-                            @Override
-                            public void onSubscribe(Disposable d) {
-                            }
+                AndPermission.with(this).permission(Manifest.permission.READ_EXTERNAL_STORAGE).onDenied(new Action() {
+                    @Override
+                    public void onAction(List<String> permissions) {
+                        ToastManage.s(mContext, getString(R.string.picture_camera));
+                        closeActivity();
+                    }
+                }).onGranted(new Action() {
+                    @Override
+                    public void onAction(List<String> permissions) {
+                        onTakePhoto();
+                    }
+                }).start();
 
-                            @Override
-                            public void onNext(Boolean aBoolean) {
-                                if (aBoolean) {
-                                    onTakePhoto();
-                                } else {
-                                    ToastManage.s(mContext, getString(R.string.picture_camera));
-                                    closeActivity();
-                                }
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                            }
-
-                            @Override
-                            public void onComplete() {
-                            }
-                        });
             }
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN
                     , WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -193,6 +180,7 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
         rl_picture_title = (RelativeLayout) findViewById(R.id.rl_picture_title);
         picture_left_back = (ImageView) findViewById(R.id.picture_left_back);
         picture_title = (TextView) findViewById(R.id.picture_title);
+        picture_title_arrow = (ImageView) findViewById(R.id.picture_title_arrow);
         picture_right = (TextView) findViewById(R.id.picture_right);
         picture_tv_ok = (TextView) findViewById(R.id.picture_tv_ok);
         picture_id_preview = (TextView) findViewById(R.id.picture_id_preview);
@@ -223,7 +211,7 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
                 : getString(R.string.picture_camera_roll);
         picture_title.setText(title);
         folderWindow = new FolderPopWindow(this, config.mimeType);
-        folderWindow.setPictureTitleView(picture_title);
+        folderWindow.setPictureTitleView(picture_title, picture_title_arrow);
         folderWindow.setOnItemClickListener(this);
         picture_recycler.setHasFixedSize(true);
         picture_recycler.addItemDecoration(new GridSpacingItemDecoration(config.imageSpanCount,
@@ -233,30 +221,18 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
         ((SimpleItemAnimator) picture_recycler.getItemAnimator())
                 .setSupportsChangeAnimations(false);
         mediaLoader = new LocalMediaLoader(this, config.mimeType, config.isGif, config.videoMaxSecond, config.videoMinSecond);
-        rxPermissions.request(Manifest.permission.READ_EXTERNAL_STORAGE)
-                .subscribe(new Observer<Boolean>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                    }
-
-                    @Override
-                    public void onNext(Boolean aBoolean) {
-                        if (aBoolean) {
-                            mHandler.sendEmptyMessage(SHOW_DIALOG);
-                            readLocalMedia();
-                        } else {
-                            ToastManage.s(mContext, getString(R.string.picture_jurisdiction));
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                    }
-
-                    @Override
-                    public void onComplete() {
-                    }
-                });
+        AndPermission.with(this).permission(Manifest.permission.READ_EXTERNAL_STORAGE).onGranted(new Action() {
+            @Override
+            public void onAction(List<String> permissions) {
+                mHandler.sendEmptyMessage(SHOW_DIALOG);
+                readLocalMedia();
+            }
+        }).onDenied(new Action() {
+            @Override
+            public void onAction(List<String> permissions) {
+                ToastManage.s(mContext, getString(R.string.picture_jurisdiction));
+            }
+        }).start();
         tv_empty.setText(config.mimeType == PictureMimeType.ofAudio() ?
                 getString(R.string.picture_audio_empty)
                 : getString(R.string.picture_empty));
@@ -403,31 +379,20 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
      * start to camera audio
      */
     public void startOpenCameraAudio() {
-        rxPermissions.request(Manifest.permission.RECORD_AUDIO).subscribe(new Observer<Boolean>() {
+        AndPermission.with(this).permission(Manifest.permission.RECORD_AUDIO).onGranted(new Action() {
             @Override
-            public void onSubscribe(Disposable d) {
-            }
-
-            @Override
-            public void onNext(Boolean aBoolean) {
-                if (aBoolean) {
-                    Intent cameraIntent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
-                    if (cameraIntent.resolveActivity(getPackageManager()) != null) {
-                        startActivityForResult(cameraIntent, PictureConfig.REQUEST_CAMERA);
-                    }
-                } else {
-                    ToastManage.s(mContext, getString(R.string.picture_audio));
+            public void onAction(List<String> permissions) {
+                Intent cameraIntent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
+                if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivityForResult(cameraIntent, PictureConfig.REQUEST_CAMERA);
                 }
             }
-
+        }).onDenied(new Action() {
             @Override
-            public void onError(Throwable e) {
+            public void onAction(List<String> permissions) {
+                ToastManage.s(mContext, getString(R.string.picture_audio));
             }
-
-            @Override
-            public void onComplete() {
-            }
-        });
+        }).start();
     }
 
     /**
@@ -741,34 +706,20 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
     @Override
     public void onTakePhoto() {
         // 启动相机拍照,先判断手机是否有拍照权限
-        rxPermissions.request(Manifest.permission.CAMERA).subscribe(new Observer<Boolean>() {
+        AndPermission.with(this).permission(Manifest.permission.CAMERA).onGranted(new Action() {
             @Override
-            public void onSubscribe(Disposable d) {
-
+            public void onAction(List<String> permissions) {
+                startCamera();
             }
-
+        }).onDenied(new Action() {
             @Override
-            public void onNext(Boolean aBoolean) {
-                if (aBoolean) {
-                    startCamera();
-                } else {
-                    ToastManage.s(mContext, getString(R.string.picture_camera));
-                    if (config.camera) {
-                        closeActivity();
-                    }
+            public void onAction(List<String> permissions) {
+                ToastManage.s(mContext, getString(R.string.picture_camera));
+                if (config.camera) {
+                    closeActivity();
                 }
             }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-
-            @Override
-            public void onComplete() {
-
-            }
-        });
+        }).start();
     }
 
     @Override
@@ -1082,8 +1033,8 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (RxBus.getDefault().isRegistered(this)) {
-            RxBus.getDefault().unregister(this);
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
         }
         ImagesObservable.getInstance().clearLocalMedia();
         if (animation != null) {

@@ -30,16 +30,18 @@ dependencies {
     compile "com.android.support:appcompat-v7:${cfgs.androidSupportVersion}"
     //noinspection GradleCompatible
     compile "com.android.support:recyclerview-v7:${cfgs.androidSupportVersion}"
-    compile "com.github.bumptech.glide:glide:${cfgs.glide}"
-    compile "io.reactivex.rxjava2:rxjava:${cfgs.rxjava}"
-    compile "io.reactivex.rxjava2:rxandroid:${cfgs.rxandroid}"
+    implementation "com.github.bumptech.glide:glide:${cfgs.glide}"
+    implementation "io.reactivex:rxjava:${cfgs.rxjava}"
+    implementation "io.reactivex:rxandroid:${cfgs.rxandroid}"
+    implementation "com.yanzhenjie:permission:${cfgs.andPermission}"
+    implementation "org.greenrobot:eventbus:${cfgs.eventBus}"
 }
 
 publish {
     userOrg = 'huach'//bintray.com用户名
-    groupId = 'com.ors'//jcenter上的路径
+    groupId = 'com.huach'//jcenter上的路径
     artifactId = 'PictureSelector'//项目名称
-    publishVersion = '1.0.0'//版本号
+    publishVersion = '1.0.4'//版本号
     desc = 'android picture selector'//描述，不重要
     website = 'https://github.com/469412882/PictureSelector'//网站，不重要；尽量模拟github上的地址，例如我这样的；当然你有地址最好了
 }

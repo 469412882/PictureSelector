@@ -9,7 +9,7 @@
         android:id="@+id/rl_picture_title"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="?colorPrimary"
+        android:background="?attr/picture.toolbar.bg"
         android:gravity="center_vertical">
 
         <ImageView
@@ -17,23 +17,37 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:tint="?attr/picture.toolbar.textColor"
             android:padding="15dp"
             android:src="?attr/picture.leftBack.icon" />
 
-        <TextView
-            android:id="@+id/picture_title"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:drawablePadding="2dp"
-            android:drawableRight="?attr/picture.arrow_down.icon"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:maxEms="11"
-            android:padding="6dp"
-            android:text="@string/picture_camera_roll"
-            android:textColor="?picture.title.textColor"
-            android:textSize="17sp" />
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/picture_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="2dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxEms="11"
+                android:padding="6dp"
+                android:text="@string/picture_camera_roll"
+                android:textColor="?picture.toolbar.textColor"
+                android:textSize="17sp" />
+
+            <ImageView
+                android:id="@+id/picture_title_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="?attr/picture.arrow_down.icon"
+                android:tint="?attr/picture.toolbar.textColor"/>
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/picture_right"
@@ -44,7 +58,7 @@
             android:gravity="center"
             android:padding="10dp"
             android:text="@string/picture_cancel"
-            android:textColor="?picture.right.textColor"
+            android:textColor="?picture.toolbar.textColor"
             android:textSize="14sp" />
     </RelativeLayout>
 

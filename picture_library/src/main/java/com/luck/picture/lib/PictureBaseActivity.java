@@ -24,7 +24,6 @@ import com.luck.picture.lib.entity.EventEntity;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.entity.LocalMediaFolder;
 import com.luck.picture.lib.immersive.ImmersiveManage;
-import com.luck.picture.lib.rxbus2.RxBus;
 import com.luck.picture.lib.tools.AttrsUtils;
 import com.luck.picture.lib.tools.DateUtils;
 import com.luck.picture.lib.tools.DoubleUtils;
@@ -32,15 +31,19 @@ import com.luck.picture.lib.tools.PictureFileUtils;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropMulti;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
-import io.reactivex.Flowable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 /**
  * @author：luck
@@ -206,25 +209,29 @@ public class PictureBaseActivity extends FragmentActivity {
     protected void compressImage(final List<LocalMedia> result) {
         showCompressDialog();
         if (config.synOrAsy) {
-            Flowable.just(result)
+            Observable.just(result)
                     .observeOn(Schedulers.io())
-                    .map(new Function<List<LocalMedia>, List<File>>() {
+                    .map(new Func1<List<LocalMedia>, List<File>>() {
                         @Override
-                        public List<File> apply(@NonNull List<LocalMedia> list) throws Exception {
-                            List<File> files = Luban.with(mContext)
-                                    .setTargetDir(config.compressSavePath)
-                                    .ignoreBy(config.minimumCompressSize)
-                                    .loadLocalMedia(list).get();
+                        public List<File> call(List<LocalMedia> list) {
+                            List<File> files = null;
+                            try {
+                                files = Luban.with(mContext)
+                                        .setTargetDir(config.compressSavePath)
+                                        .ignoreBy(config.minimumCompressSize)
+                                        .loadLocalMedia(list).get();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                             if (files == null) {
                                 files = new ArrayList<>();
                             }
                             return files;
                         }
-                    })
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Consumer<List<File>>() {
+                    }).observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Action1<List<File>>() {
                         @Override
-                        public void accept(@NonNull List<File> files) throws Exception {
+                        public void call(List<File> files) {
                             handleCompressCallBack(result, files);
                         }
                     });
@@ -240,13 +247,13 @@ public class PictureBaseActivity extends FragmentActivity {
 
                         @Override
                         public void onSuccess(List<LocalMedia> list) {
-                            RxBus.getDefault().post(new EventEntity(PictureConfig.CLOSE_PREVIEW_FLAG));
+                            EventBus.getDefault().post(new EventEntity(PictureConfig.CLOSE_PREVIEW_FLAG));
                             onResult(list);
                         }
 
                         @Override
                         public void onError(Throwable e) {
-                            RxBus.getDefault().post(new EventEntity(PictureConfig.CLOSE_PREVIEW_FLAG));
+                            EventBus.getDefault().post(new EventEntity(PictureConfig.CLOSE_PREVIEW_FLAG));
                             onResult(result);
                         }
                     }).launch();
@@ -272,7 +279,7 @@ public class PictureBaseActivity extends FragmentActivity {
                 image.setCompressPath(eqTrue ? "" : path);
             }
         }
-        RxBus.getDefault().post(new EventEntity(PictureConfig.CLOSE_PREVIEW_FLAG));
+        EventBus.getDefault().post(new EventEntity(PictureConfig.CLOSE_PREVIEW_FLAG));
         onResult(images);
     }
 

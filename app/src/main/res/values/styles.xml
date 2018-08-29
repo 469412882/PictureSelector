@@ -15,6 +15,10 @@
         <item name="colorPrimary">@color/white</item>
         <!--状态栏背景色-->
         <item name="colorPrimaryDark">@color/white</item>
+        <!--标题栏背景色-->
+        <item name="picture.toolbar.bg">@color/white</item>
+        <!--标题栏文字颜色-->
+        <item name="picture.toolbar.textColor">@color/black</item>
         <!--是否改变图片列表界面状态栏字体颜色为黑色-->
         <item name="picture.statusFontColor">true</item>
         <!--返回键图标-->
@@ -68,6 +72,10 @@
         <item name="colorPrimary">@color/blue</item>
         <!--状态栏背景色-->
         <item name="colorPrimaryDark">@color/blue</item>
+        <!--标题栏背景色-->
+        <item name="picture.toolbar.bg">@color/blue</item>
+        <!--标题栏文字颜色-->
+        <item name="picture.toolbar.textColor">@color/white</item>
         <!--是否改变图片列表界面状态栏字体颜色为黑色-->
         <item name="picture.statusFontColor">false</item>
         <!--返回键图标-->
@@ -77,9 +85,9 @@
         <!--标题上拉箭头-->
         <item name="picture.arrow_up.icon">@drawable/arrow_up</item>
         <!--标题文字颜色-->
-        <item name="picture.title.textColor">@color/white</item>
+        <item name="picture.title.textColor">@color/black</item>
         <!--标题栏右边文字-->
-        <item name="picture.right.textColor">@color/white</item>
+        <item name="picture.right.textColor">@color/black</item>
         <!--图片列表勾选样式-->
         <item name="picture.checked.style">@drawable/checkbox_num_selector</item>
         <!--开启图片列表勾选数字模式,开启的话勾选样式要换-->
@@ -122,6 +130,10 @@
         <item name="colorPrimary">@color/white</item>
         <!--状态栏背景色-->
         <item name="colorPrimaryDark">@color/white</item>
+        <!--标题栏背景色-->
+        <item name="picture.toolbar.bg">@color/white</item>
+        <!--标题栏文字颜色-->
+        <item name="picture.toolbar.textColor">@color/color_53</item>
         <!--是否改变图片列表界面状态栏字体颜色为黑色-->
         <item name="picture.statusFontColor">true</item>
         <!--返回键图标-->

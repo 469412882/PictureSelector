@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.luck.picture.lib.R;
 import com.luck.picture.lib.config.PictureMimeType;
@@ -75,16 +74,15 @@ public class PictureAlbumDirectoryAdapter extends RecyclerView.Adapter<PictureAl
         if (mimeType == PictureMimeType.ofAudio()) {
             holder.first_image.setImageResource(R.drawable.audio_placeholder);
         } else {
-            RequestOptions options = new RequestOptions()
+
+            Glide.with(holder.itemView.getContext())
+                    .load(imagePath)
+                    .asBitmap()
                     .placeholder(R.drawable.ic_placeholder)
                     .centerCrop()
                     .sizeMultiplier(0.5f)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .override(160, 160);
-            Glide.with(holder.itemView.getContext())
-                    .asBitmap()
-                    .load(imagePath)
-                    .apply(options)
+                    .override(160, 160)
                     .into(new BitmapImageViewTarget(holder.first_image) {
                         @Override
                         protected void setResource(Bitmap resource) {
