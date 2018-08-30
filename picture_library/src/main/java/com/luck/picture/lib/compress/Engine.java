@@ -19,13 +19,15 @@ class Engine {
   private File tagImg;
   private int srcWidth;
   private int srcHeight;
+  private int compressQuality;
 
-  Engine(String srcImg, File tagImg) throws IOException {
+  Engine(String srcImg, File tagImg, int compressQuality) throws IOException {
     if (Checker.isJPG(srcImg)) {
       this.srcExif = new ExifInterface(srcImg);
     }
     this.tagImg = tagImg;
     this.srcImg = srcImg;
+    this.compressQuality = compressQuality;
 
     BitmapFactory.Options options = new BitmapFactory.Options();
     options.inJustDecodeBounds = true;
@@ -92,7 +94,7 @@ class Engine {
     ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
     tagBitmap = rotatingImage(tagBitmap);
-    tagBitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream);
+    tagBitmap.compress(Bitmap.CompressFormat.JPEG, compressQuality, stream);
     tagBitmap.recycle();
 
     FileOutputStream fos = new FileOutputStream(tagImg);

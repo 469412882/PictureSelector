@@ -219,6 +219,7 @@ public class PictureBaseActivity extends FragmentActivity {
                                 files = Luban.with(mContext)
                                         .setTargetDir(config.compressSavePath)
                                         .ignoreBy(config.minimumCompressSize)
+                                        .setCompressQuality(config.compressQuality)
                                         .loadLocalMedia(list).get();
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -240,6 +241,7 @@ public class PictureBaseActivity extends FragmentActivity {
                     .loadLocalMedia(result)
                     .ignoreBy(config.minimumCompressSize)
                     .setTargetDir(config.compressSavePath)
+                    .setCompressQuality(config.compressQuality)
                     .setCompressListener(new OnCompressListener() {
                         @Override
                         public void onStart() {

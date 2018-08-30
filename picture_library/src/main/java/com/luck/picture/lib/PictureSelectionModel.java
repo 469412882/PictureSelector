@@ -289,6 +289,15 @@ public class PictureSelectionModel {
     }
 
     /**
+     * @param quality compress quality
+     * @return
+     */
+    public PictureSelectionModel compressQuality(int quality) {
+        selectionConfig.compressQuality = quality;
+        return this;
+    }
+
+    /**
      * @param synOrAsy Synchronous or asynchronous compression
      * @return
      */

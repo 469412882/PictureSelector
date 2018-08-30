@@ -36,6 +36,7 @@ public final class PictureSelectionConfig implements Parcelable {
     public int videoMinSecond;
     public int recordVideoSecond;
     public int minimumCompressSize;
+    public int compressQuality;
     public int imageSpanCount;
     public int overrideWidth;
     public int overrideHeight;
@@ -80,6 +81,7 @@ public final class PictureSelectionConfig implements Parcelable {
         videoMinSecond = 0;
         recordVideoSecond = 60;
         minimumCompressSize = PictureConfig.MAX_COMPRESS_SIZE;
+        compressQuality = 80;
         imageSpanCount = 4;
         overrideWidth = 0;
         overrideHeight = 0;
@@ -150,6 +152,7 @@ public final class PictureSelectionConfig implements Parcelable {
         dest.writeInt(this.videoMinSecond);
         dest.writeInt(this.recordVideoSecond);
         dest.writeInt(this.minimumCompressSize);
+        dest.writeInt(this.compressQuality);
         dest.writeInt(this.imageSpanCount);
         dest.writeInt(this.overrideWidth);
         dest.writeInt(this.overrideHeight);
@@ -200,6 +203,7 @@ public final class PictureSelectionConfig implements Parcelable {
         this.videoMinSecond = in.readInt();
         this.recordVideoSecond = in.readInt();
         this.minimumCompressSize = in.readInt();
+        this.compressQuality = in.readInt();
         this.imageSpanCount = in.readInt();
         this.overrideWidth = in.readInt();
         this.overrideHeight = in.readInt();
