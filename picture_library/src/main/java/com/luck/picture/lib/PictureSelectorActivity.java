@@ -74,7 +74,7 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
     private ImageView picture_left_back, picture_title_arrow;
     private TextView picture_title, picture_right, picture_tv_ok, tv_empty,
             picture_tv_img_num, picture_id_preview, tv_PlayPause, tv_Stop, tv_Quit,
-            tv_musicStatus, tv_musicTotal, tv_musicTime;
+            tv_musicStatus, tv_musicTotal, tv_musicTime, picture_tv_confirm;
     private RelativeLayout rl_picture_title;
     private LinearLayout id_ll_ok;
     private RecyclerView picture_recycler;
@@ -182,6 +182,7 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
         picture_title = (TextView) findViewById(R.id.picture_title);
         picture_title_arrow = (ImageView) findViewById(R.id.picture_title_arrow);
         picture_right = (TextView) findViewById(R.id.picture_right);
+        picture_tv_confirm = (TextView) findViewById(R.id.picture_tv_confirm);
         picture_tv_ok = (TextView) findViewById(R.id.picture_tv_ok);
         picture_id_preview = (TextView) findViewById(R.id.picture_id_preview);
         picture_tv_img_num = (TextView) findViewById(R.id.picture_tv_img_num);
@@ -204,6 +205,7 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
         }
         picture_left_back.setOnClickListener(this);
         picture_right.setOnClickListener(this);
+        picture_tv_confirm.setOnClickListener(this);
         id_ll_ok.setOnClickListener(this);
         picture_title.setOnClickListener(this);
         String title = config.mimeType == PictureMimeType.ofAudio() ?
@@ -452,7 +454,7 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
             overridePendingTransition(R.anim.a5, 0);
         }
 
-        if (id == R.id.id_ll_ok) {
+        if (id == R.id.id_ll_ok || id == R.id.picture_tv_confirm) {
             List<LocalMedia> images = adapter.getSelectedImages();
             LocalMedia image = images.size() > 0 ? images.get(0) : null;
             String pictureType = image != null ? image.getPictureType() : "";
@@ -801,6 +803,9 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
             picture_id_preview.setEnabled(true);
             picture_id_preview.setSelected(true);
             picture_tv_ok.setSelected(true);
+            picture_tv_confirm.setSelected(true);
+            picture_tv_confirm.setVisibility(View.VISIBLE);
+            picture_right.setVisibility(View.GONE);
             if (numComplete) {
                 picture_tv_ok.setText(getString
                         (R.string.picture_done_front_num, selectImages.size(),
@@ -819,6 +824,9 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
             picture_id_preview.setEnabled(false);
             picture_id_preview.setSelected(false);
             picture_tv_ok.setSelected(false);
+            picture_tv_confirm.setSelected(false);
+            picture_tv_confirm.setVisibility(View.GONE);
+            picture_right.setVisibility(View.VISIBLE);
             if (numComplete) {
                 picture_tv_ok.setText(getString(R.string.picture_done_front_num, 0,
                         config.selectionMode == PictureConfig.SINGLE ? 1 : config.maxSelectNum));

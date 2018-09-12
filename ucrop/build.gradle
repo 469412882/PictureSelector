@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+//apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion cfgs.compileSdkVersion
@@ -37,3 +38,12 @@ dependencies {
     compile "com.android.support:recyclerview-v7:${cfgs.androidSupportVersion}"
     implementation "com.github.bumptech.glide:glide:${cfgs.glide}"
 }
+
+/*publish {
+    userOrg = 'huach'//bintray.com用户名
+    groupId = 'com.huach'//jcenter上的路径
+    artifactId = 'PictureCrop'//项目名称
+    publishVersion = '1.0.0'//版本号
+    desc = 'android picture crop'//描述，不重要
+    website = 'https://github.com/469412882/PictureSelector'//网站，不重要；尽量模拟github上的地址，例如我这样的；当然你有地址最好了
+}*/

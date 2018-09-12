@@ -1,5 +1,5 @@
 <resources>
-    <string name="picture_camera_roll">全部照片</string>
+    <string name="picture_camera_roll">系统相册</string>
     <string name="picture_cancel">取消</string>
     <string name="picture_take_picture">拍摄</string>
     <string name="picture_rule">不能同时选择图片或视频</string>
