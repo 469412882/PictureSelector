@@ -75,8 +75,8 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
     private TextView picture_title, picture_right, picture_tv_ok, tv_empty,
             picture_tv_img_num, picture_id_preview, tv_PlayPause, tv_Stop, tv_Quit,
             tv_musicStatus, tv_musicTotal, tv_musicTime, picture_tv_confirm;
-    private RelativeLayout rl_picture_title;
-    private LinearLayout id_ll_ok;
+    private RelativeLayout rl_picture_title, rl_bottom;
+    private LinearLayout id_ll_ok, picture_title_root;
     private RecyclerView picture_recycler;
     private PictureImageGridAdapter adapter;
     private List<LocalMedia> images = new ArrayList<>();
@@ -180,10 +180,12 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
         rl_picture_title = (RelativeLayout) findViewById(R.id.rl_picture_title);
         picture_left_back = (ImageView) findViewById(R.id.picture_left_back);
         picture_title = (TextView) findViewById(R.id.picture_title);
+        picture_title_root = (LinearLayout) findViewById(R.id.picture_title_root);
         picture_title_arrow = (ImageView) findViewById(R.id.picture_title_arrow);
         picture_right = (TextView) findViewById(R.id.picture_right);
         picture_tv_confirm = (TextView) findViewById(R.id.picture_tv_confirm);
         picture_tv_ok = (TextView) findViewById(R.id.picture_tv_ok);
+        rl_bottom = (RelativeLayout) findViewById(R.id.rl_bottom);
         picture_id_preview = (TextView) findViewById(R.id.picture_id_preview);
         picture_tv_img_num = (TextView) findViewById(R.id.picture_tv_img_num);
         picture_recycler = (RecyclerView) findViewById(R.id.picture_recycler);
@@ -203,11 +205,13 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
             picture_id_preview.setVisibility(config.mimeType == PictureConfig.TYPE_VIDEO
                     ? View.GONE : View.VISIBLE);
         }
+        /* 非预览下隐藏下边的内容 */
+        rl_bottom.setVisibility(config.hideBottomControls ? View.GONE : View.VISIBLE);
         picture_left_back.setOnClickListener(this);
-        picture_right.setOnClickListener(this);
+//        picture_right.setOnClickListener(this);
         picture_tv_confirm.setOnClickListener(this);
         id_ll_ok.setOnClickListener(this);
-        picture_title.setOnClickListener(this);
+        picture_title_root.setOnClickListener(this);
         String title = config.mimeType == PictureMimeType.ofAudio() ?
                 getString(R.string.picture_all_audio)
                 : getString(R.string.picture_camera_roll);
@@ -426,7 +430,7 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
                 closeActivity();
             }
         }
-        if (id == R.id.picture_title) {
+        if (id == R.id.picture_title_root) {
             if (folderWindow.isShowing()) {
                 folderWindow.dismiss();
             } else {

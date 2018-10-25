@@ -102,7 +102,7 @@ public final class PictureSelectionConfig implements Parcelable {
         circleDimmedLayer = false;
         showCropFrame = true;
         showCropGrid = true;
-        hideBottomControls = true;
+        hideBottomControls = false;
         rotateEnabled = true;
         scaleEnabled = true;
         previewEggs = false;

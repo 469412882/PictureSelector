@@ -22,6 +22,7 @@
             android:src="?attr/picture.leftBack.icon" />
 
         <LinearLayout
+            android:id="@+id/picture_title_root"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -57,7 +58,7 @@
             android:layout_centerVertical="true"
             android:gravity="center"
             android:padding="10dp"
-            android:text="@string/picture_cancel"
+            android:text="@string/picture_confirm"
             android:textColor="?picture.toolbar.textColor"
             android:textSize="14sp"/>
 
