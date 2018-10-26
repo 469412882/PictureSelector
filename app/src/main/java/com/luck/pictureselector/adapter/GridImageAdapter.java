@@ -184,7 +184,7 @@ public class GridImageAdapter extends
                         .load(path)
                         .centerCrop()
                         .placeholder(R.color.color_f6)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(viewHolder.mImg);
             }
             //itemView 的点击事件

@@ -81,7 +81,7 @@ public class PictureAlbumDirectoryAdapter extends RecyclerView.Adapter<PictureAl
                     .placeholder(R.drawable.ic_placeholder)
                     .centerCrop()
                     .sizeMultiplier(0.5f)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .override(160, 160)
                     .into(new BitmapImageViewTarget(holder.first_image) {
                         @Override
