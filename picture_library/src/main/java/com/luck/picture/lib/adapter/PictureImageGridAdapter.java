@@ -188,7 +188,7 @@ public class PictureImageGridAdapter extends RecyclerView.Adapter<RecyclerView.V
                 BitmapRequestBuilder builder = Glide.with(context)
                         .load(path)
                         .asBitmap()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .centerCrop()
                         .placeholder(R.drawable.image_placeholder);
                 if (overrideWidth <= 0 && overrideHeight <= 0) {
