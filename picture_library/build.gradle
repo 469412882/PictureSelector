@@ -29,7 +29,7 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.huach:PictureCrop:1.0.0'
+    implementation 'com.huach:PictureCrop:1.0.2'
     //noinspection GradleCompatible
     implementation "com.android.support:appcompat-v7:${cfgs.androidSupportVersion}"
     //noinspection GradleCompatible
